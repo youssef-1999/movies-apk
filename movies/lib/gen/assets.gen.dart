@@ -11,8 +11,39 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// File path: assets/icons/email.svg
+  String get email => 'assets/icons/email.svg';
+
+  /// File path: assets/icons/eyes_off.svg
+  String get eyesOff => 'assets/icons/eyes_off.svg';
+
+  /// File path: assets/icons/google.svg
+  String get google => 'assets/icons/google.svg';
+
+  /// File path: assets/icons/name.svg
+  String get name => 'assets/icons/name.svg';
+
+  /// File path: assets/icons/password.svg
+  String get password => 'assets/icons/password.svg';
+
+  /// File path: assets/icons/phone.svg
+  String get phone => 'assets/icons/phone.svg';
+
+  /// List of all assets
+  List<String> get values => [email, eyesOff, google, name, password, phone];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/ar.png
+  AssetGenImage get ar => const AssetGenImage('assets/images/ar.png');
+
+  /// File path: assets/images/en.png
+  AssetGenImage get en => const AssetGenImage('assets/images/en.png');
 
   /// File path: assets/images/movie1.png
   AssetGenImage get movie1 => const AssetGenImage('assets/images/movie1.png');
@@ -30,7 +61,15 @@ class $AssetsImagesGen {
   AssetGenImage get movie5 => const AssetGenImage('assets/images/movie5.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [movie1, movie2, movie3, movie4, movie5];
+  List<AssetGenImage> get values => [
+    ar,
+    en,
+    movie1,
+    movie2,
+    movie3,
+    movie4,
+    movie5,
+  ];
 }
 
 class $AssetsPostersGen {
@@ -47,15 +86,33 @@ class $AssetsPostersGen {
 class $AssetsSplashGen {
   const $AssetsSplashGen();
 
-  /// File path: assets/splash/Splash Screen.png
+  /// File path: assets/splash/splash_branding.png
+  AssetGenImage get splashBranding =>
+      const AssetGenImage('assets/splash/splash_branding.png');
+
+  /// File path: assets/splash/splash_logo.png
+  AssetGenImage get splashLogo =>
+      const AssetGenImage('assets/splash/splash_logo.png');
+
+  /// File path: assets/splash/splash_logo_android12.png
+  AssetGenImage get splashLogoAndroid12 =>
+      const AssetGenImage('assets/splash/splash_logo_android12.png');
+
+  /// File path: assets/splash/splash_screen.png
   AssetGenImage get splashScreen =>
-      const AssetGenImage('assets/splash/Splash Screen.png');
+      const AssetGenImage('assets/splash/splash_screen.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [splashScreen];
+  List<AssetGenImage> get values => [
+    splashBranding,
+    splashLogo,
+    splashLogoAndroid12,
+    splashScreen,
+  ];
 }
 
 abstract final class Assets {
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsPostersGen posters = $AssetsPostersGen();
   static const $AssetsSplashGen splash = $AssetsSplashGen();

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movies/common/app_theme.dart';
+import 'package:movies/screens/auth/login_screen.dart';
+import 'package:movies/screens/onboarding_screens.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +12,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.dark,
+      initialRoute: OnboardingScreens.routeName,
+      routes: {
+        OnboardingScreens.routeName: (context) => const OnboardingScreens(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+      },
     );
   }
 }
