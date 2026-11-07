@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movies/common/app_theme.dart';
+import 'package:movies/screens/auth/forget_password.dart';
 import 'package:movies/screens/auth/login_screen.dart';
+import 'package:movies/screens/auth/register_screen.dart';
 import 'package:movies/screens/onboarding_screens.dart';
 
 void main() {
@@ -19,6 +21,8 @@ class MainApp extends StatelessWidget {
       routes: {
         OnboardingScreens.routeName: (context) => const OnboardingScreens(),
         LoginScreen.routeName: (context) => const LoginScreen(),
+        RegisterScreen.routeName: (context) => const RegisterScreen(),
+        ForgetPassword.routeName: (context) => const ForgetPassword(),
       },
     );
   }

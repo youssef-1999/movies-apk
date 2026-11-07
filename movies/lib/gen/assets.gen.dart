@@ -39,6 +39,10 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/Forgot password-bro 1.png
+  AssetGenImage get forgotPasswordBro1 =>
+      const AssetGenImage('assets/images/Forgot password-bro 1.png');
+
   /// File path: assets/images/ar.png
   AssetGenImage get ar => const AssetGenImage('assets/images/ar.png');
 
@@ -62,6 +66,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    forgotPasswordBro1,
     ar,
     en,
     movie1,

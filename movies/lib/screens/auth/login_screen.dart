@@ -92,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
+                        Navigator.pushNamed(context, '/forget-password');
                         // Handle forgot password logic
                       },
                       child: Text(
@@ -123,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             // Handle sign up logic
+                            Navigator.pushNamed(context, '/register');
                           },
                       ),
                     ],
