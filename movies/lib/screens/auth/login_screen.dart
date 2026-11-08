@@ -24,48 +24,74 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
   String _languageCode = 'en';
 
-final _authService = AuthService();   // add as a field, import auth_service.dart
-bool _isLoading = false;
+  final _authService =
+      AuthService(); // add as a field, import auth_service.dart
+  bool _isLoading = false;
 
-Future<void> _login() async {
-  if (!(_formKey.currentState?.validate() ?? false)) {
-    // keep your existing "Please fix the errors" SnackBar here
-    return;
+  Future<void> _loginWithGoogle() async {
+    setState(() => _isLoading = true);
+    try {
+      final result = await _authService.signInWithGoogle();
+      debugPrint('Google login result: ${result?.user?.email}, mounted=$mounted');
+      if (result == null || !mounted) return; // cancelled
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logged in successfully!'),
+          backgroundColor: AppColors.green,
+        ),
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } catch (e, st) {
+      debugPrint('Google login error: $e\n$st');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Google sign-in failed: $e'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
-  setState(() => _isLoading = true);
-  try {
-    await _authService.login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-    if (!mounted) return;
-    // show your green success SnackBar, then navigate to home/login
-ScaffoldMessenger.of(context).showSnackBar(
-  const SnackBar(
-    content: Text('Logged in successfully!'),
-    backgroundColor: AppColors.green,
-  ),
-);
-Navigator.pushNamedAndRemoveUntil(
-  context,
-  '/home',
-  (route) => false,
-);
-  } on FirebaseAuthException catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Login failed!',style: TextStyle(color: AppColors.white),),
-        backgroundColor: AppColors.red,
-      ),
-    );
 
-    // show red SnackBar with e.message ?? 'Login failed'
-  } finally {
-    if (mounted) setState(() => _isLoading = false);
+  Future<void> _login() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      // keep your existing "Please fix the errors" SnackBar here
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      await _authService.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+      if (!mounted) return;
+      // show your green success SnackBar, then navigate to home/login
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logged in successfully!'),
+          backgroundColor: AppColors.green,
+        ),
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Login failed!',
+            style: TextStyle(color: AppColors.white),
+          ),
+          backgroundColor: AppColors.red,
+        ),
+      );
+
+      // show red SnackBar with e.message ?? 'Login failed'
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
-}
-
 
   @override
   void dispose() {
@@ -132,9 +158,9 @@ Navigator.pushNamedAndRemoveUntil(
                       },
                       child: Text(
                         'Forgot Password?',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.copyWith(color: AppColors.yellow),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.yellow,
+                        ),
                       ),
                     ).paddingOnly(top: 5),
                   ],
@@ -153,9 +179,9 @@ Navigator.pushNamedAndRemoveUntil(
                     children: [
                       TextSpan(
                         text: 'Sign Up',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium?.copyWith(color: AppColors.yellow),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.yellow,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             // Handle sign up logic
@@ -198,10 +224,9 @@ Navigator.pushNamedAndRemoveUntil(
                     width: 24,
                     height: 24,
                   ),
-                  onPressed: () {
-                    // Handle Google sign-in logic
-                  },
+                  onPressed: _isLoading ? null : _loginWithGoogle,
                 ).paddingOnly(left: 19, right: 19, top: 20),
+
                 LanguageSwitch(
                   languageCode: _languageCode,
                   onChanged: (code) {
