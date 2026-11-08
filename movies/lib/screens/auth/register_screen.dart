@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/common/app_colors.dart';
 import 'package:movies/extensions/padding_extension.dart';
 import 'package:movies/gen/assets.gen.dart';
+import 'package:movies/screens/auth/login_screen.dart';
+import 'package:movies/services/auth_service.dart';
 import 'package:movies/widgets/custom_elevated_button.dart';
 import 'package:movies/widgets/custom_text_field.dart';
 import 'package:movies/widgets/language_switch.dart';
@@ -18,47 +21,65 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _confirmpasswordController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _confirmpasswordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   String _languageCode = 'en';
 
-  void _register() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Perform registration logic here
-      String email = _emailController.text;
-      String password = _passwordController.text;
-      String name = _nameController.text;
-      String phone = _phoneController.text;
-      print('Email: $email');
-      print('Password: $password');
-      print('Name: $name');
-      print('Phone: $phone');
-      ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: const Text('Account created successfully'),
-    backgroundColor: AppColors.green, // use Colors.red for errors
-    behavior: SnackBarBehavior.floating,
-    duration: const Duration(seconds: 3),
-  ),
-);
+final _authService = AuthService();   // add as a field, import auth_service.dart
+bool _isLoading = false;
 
-
-    }
-    else {
-          ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: const Text('Please fix the errors in the form'),
-    backgroundColor: AppColors.red, // use Colors.red for errors
-    behavior: SnackBarBehavior.floating,
-    duration: const Duration(seconds: 3),
-  ),
-);
-     
-    }
+Future<void> _register() async {
+  if (!(_formKey.currentState?.validate() ?? false)) {
+    // keep your existing "Please fix the errors" SnackBar here
+    return;
   }
+  setState(() => _isLoading = true);
+  try {
+    await _authService.register(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+  await   FirebaseAuth.instance.currentUser?.updateDisplayName(_nameController.text.trim());
+    if (!mounted) return;
+    // show your green success SnackBar, then navigate to home/login
+    // Firebase signs the new user in automatically; sign out so they log in manually.
+    await _authService.logout();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Registered successfully! Please login.'),
+        backgroundColor: AppColors.green,
+      ),
+    );
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      LoginScreen.routeName,
+      (route) => false,
+    );
+  } on FirebaseAuthException catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.message ?? 'Registration failed!'),
+        backgroundColor: AppColors.red,
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.toString()),
+        backgroundColor: AppColors.red,
+      ),
+    );
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
+  }
+}
+
 
   @override
   void dispose() {
@@ -153,8 +174,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   isPassword: true,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your Confirm Password';
+                    if (value == null || value.isEmpty || value != _passwordController.text) {
+                      return 'Password does not match';
                     }
                     return null;
                   },
@@ -165,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneController,
                   prefixIcon: Assets.icons.phone,
                   keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your Phone Number';
@@ -180,11 +201,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 23),
                 
                 CustomElevatedButton(
-                  text: "Create Account",
-                  onPressed: () {
-                    // Handle registration logic
-                    _register();
-                  },
+                  text:_isLoading ? 'Loading...' : "Create Account",
+                  onPressed: _isLoading ? null : _register,
+
                 ).paddingOnly(left: 19, right: 19),
                 RichText(
                   text: TextSpan(

@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movies/common/app_colors.dart';
 import 'package:movies/extensions/padding_extension.dart';
 import 'package:movies/gen/assets.gen.dart';
+import 'package:movies/services/auth_service.dart';
 import 'package:movies/widgets/custom_elevated_button.dart';
 import 'package:movies/widgets/custom_text_field.dart';
 
@@ -16,11 +18,51 @@ class ForgetPassword extends StatefulWidget {
 class _ForgetPasswordState extends State<ForgetPassword> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-void _reset_password() {
-  // Implement your password reset logic here
-  print('Reset password for email: ${_emailController.text}');
-  // You can show a success message or navigate to another screen after resetting the password
-}
+  final _authService = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _resetPassword() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await _authService.resetPassword(_emailController.text.trim());
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password reset link sent! Check your email.'),
+          backgroundColor: AppColors.green,
+        ),
+      );
+      // Go back to the login screen
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Password reset failed!'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -52,33 +94,30 @@ void _reset_password() {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(height: 69),
-                 CustomTextField(
+                const SizedBox(height: 69),
+                CustomTextField(
                   hintText: 'Email',
                   controller: _emailController,
                   prefixIcon: Assets.icons.email,
                   keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Please enter your Email';
                     }
                     return null;
                   },
                 ).paddingSymmetric(horizontal: 16),
-                SizedBox(height: 23),
+                const SizedBox(height: 23),
                 CustomElevatedButton(
-                  text: "Reset Password",
-                  onPressed: () {
-                    // Handle registration logic
-                    _reset_password();
-                  },
+                  text: _isLoading ? 'Loading...' : 'Reset Password',
+                  onPressed: _isLoading ? null : _resetPassword,
                 ).paddingOnly(left: 19, right: 19),
               ],
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

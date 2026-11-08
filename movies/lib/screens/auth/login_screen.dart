@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movies/common/app_colors.dart';
 import 'package:movies/extensions/padding_extension.dart';
 import 'package:movies/gen/assets.gen.dart';
+import 'package:movies/services/auth_service.dart';
 import 'package:movies/widgets/custom_elevated_button.dart';
 import 'package:movies/widgets/custom_text_field.dart';
 import 'package:movies/widgets/language_switch.dart';
@@ -22,15 +24,48 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = TextEditingController();
   String _languageCode = 'en';
 
-  void _login() {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Perform login logic here
-      String email = _emailController.text;
-      String password = _passwordController.text;
-      print('Email: $email');
-      print('Password: $password');
-    }
+final _authService = AuthService();   // add as a field, import auth_service.dart
+bool _isLoading = false;
+
+Future<void> _login() async {
+  if (!(_formKey.currentState?.validate() ?? false)) {
+    // keep your existing "Please fix the errors" SnackBar here
+    return;
   }
+  setState(() => _isLoading = true);
+  try {
+    await _authService.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+    if (!mounted) return;
+    // show your green success SnackBar, then navigate to home/login
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text('Logged in successfully!'),
+    backgroundColor: AppColors.green,
+  ),
+);
+Navigator.pushNamedAndRemoveUntil(
+  context,
+  '/home',
+  (route) => false,
+);
+  } on FirebaseAuthException catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Login failed!',style: TextStyle(color: AppColors.white),),
+        backgroundColor: AppColors.red,
+      ),
+    );
+
+    // show red SnackBar with e.message ?? 'Login failed'
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
+  }
+}
+
 
   @override
   void dispose() {
