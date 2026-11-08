@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movies/common/app_routes.dart';
 import 'package:movies/common/app_theme.dart';
 import 'package:movies/services/firebase_options.dart';
@@ -15,11 +16,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      initialRoute: AppRoutes.initialRoute,
-      routes: AppRoutes.routes,
+    return ScreenUtilInit(
+      // Set this to your Figma frame size
+      designSize: const Size(430, 932),
+      minTextAdapt: true,
+      builder: (context, child) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
+        initialRoute: AppRoutes.initialRoute,
+        routes: AppRoutes.routes,
+      ),
     );
   }
 }
