@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:movies/common/app_routes.dart';
-import 'package:movies/common/app_theme.dart';
-import 'package:movies/services/firebase_options.dart';
+import 'package:movies/core/routes/app_routes.dart';
+import 'package:movies/core/theme/app_theme.dart';
+import 'package:movies/firebase_options.dart';
 
 Future<void> main() async{
    WidgetsFlutterBinding.ensureInitialized();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movies/gen/assets.gen.dart';
-import 'package:movies/screens/auth/login_screen.dart';
-import 'package:movies/widgets/onboarding_item.dart';
+import 'package:movies/features/auth/presentation/screens/login_screen.dart';
+import 'package:movies/core/widgets/onboarding_item.dart';
 
 class OnboardingData {
   const OnboardingData({

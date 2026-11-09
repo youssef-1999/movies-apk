@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/common/app_colors.dart';
-import 'package:movies/extensions/padding_extension.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/core/extensions/padding_extension.dart';
 import 'package:movies/gen/assets.gen.dart';
-import 'package:movies/screens/auth/login_screen.dart';
+import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/services/auth_service.dart';
-import 'package:movies/widgets/custom_elevated_button.dart';
-import 'package:movies/widgets/custom_text_field.dart';
-import 'package:movies/widgets/language_switch.dart';
+import 'package:movies/core/widgets/custom_elevated_button.dart';
+import 'package:movies/core/widgets/custom_text_field.dart';
+import 'package:movies/core/widgets/language_switch.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
