@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:movies/core/di/injection.dart';
 import 'package:movies/core/routes/app_routes.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/firebase_options.dart';
@@ -10,9 +11,13 @@ Future<void> main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  configureDependencies();   // 👈 add this
+
   runApp(MainApp());}
 
 class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {

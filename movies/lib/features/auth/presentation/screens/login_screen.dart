@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_state.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/core/extensions/padding_extension.dart';
 import 'package:movies/gen/assets.gen.dart';
-import 'package:movies/services/auth_service.dart';
 import 'package:movies/core/widgets/custom_elevated_button.dart';
 import 'package:movies/core/widgets/custom_text_field.dart';
 import 'package:movies/core/widgets/language_switch.dart';
@@ -20,78 +21,25 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   String _languageCode = 'en';
 
-  final _authService =
-      AuthService(); // add as a field, import auth_service.dart
-  bool _isLoading = false;
 
-  Future<void> _loginWithGoogle() async {
-    setState(() => _isLoading = true);
-    try {
-      final result = await _authService.signInWithGoogle();
-      debugPrint('Google login result: ${result?.user?.email}, mounted=$mounted');
-      if (result == null || !mounted) return; // cancelled
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logged in successfully!'),
-          backgroundColor: AppColors.green,
-        ),
-      );
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-    } catch (e, st) {
-      debugPrint('Google login error: $e\n$st');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Google sign-in failed: $e'),
-          backgroundColor: AppColors.red,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 
-  Future<void> _login() async {
-    if (!(_formKey.currentState?.validate() ?? false)) {
-      // keep your existing "Please fix the errors" SnackBar here
-      return;
-    }
-    setState(() => _isLoading = true);
-    try {
-      await _authService.login(
+// Method to handle login
+void _loginWithGoogle() {
+  context.read<AuthCubit>().googleSignin();
+
+}
+
+  void _login() {
+  if (!(_formKey.currentState?.validate() ?? false)) return;
+  context.read<AuthCubit>().login(
         _emailController.text.trim(),
         _passwordController.text,
       );
-      if (!mounted) return;
-      // show your green success SnackBar, then navigate to home/login
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logged in successfully!'),
-          backgroundColor: AppColors.green,
-        ),
-      );
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Login failed!',
-            style: TextStyle(color: AppColors.white),
-          ),
-          backgroundColor: AppColors.red,
-        ),
-      );
-
-      // show red SnackBar with e.message ?? 'Login failed'
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
+}
 
   @override
   void dispose() {
@@ -102,8 +50,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+    return BlocConsumer<AuthCubit, AuthState>(
+    // 👂 listener: do ONE-TIME things (SnackBar, navigation)
+    listener: (context, state) {
+      if (state is AuthSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Logged in successfully!'), backgroundColor: AppColors.green),
+        );
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      } else if (state is AuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+        );
+      }
+    },
+    // 🎨 builder: DRAW the screen (rebuilds on every state)
+    builder: (context, state) {
+      final isLoading = state is AuthLoading;
+      return Form(
+        key: _formKey,
+
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -169,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   text: "Login",
                   onPressed: () {
                     // Handle login logic
-                    _login();
+                   isLoading ? null : _login();
                   },
                 ).paddingOnly(left: 19, right: 19),
                 RichText(
@@ -224,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 24,
                     height: 24,
                   ),
-                  onPressed: _isLoading ? null : _loginWithGoogle,
+                  onPressed: isLoading ? null : _loginWithGoogle,
                 ).paddingOnly(left: 19, right: 19, top: 20),
 
                 LanguageSwitch(
@@ -240,5 +206,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+  );
+    
   }
 }
