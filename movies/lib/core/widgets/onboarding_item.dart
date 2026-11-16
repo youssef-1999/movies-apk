@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movies/common/app_colors.dart';
-import 'package:movies/extensions/padding_extension.dart';
-import 'package:movies/widgets/custom_elevated_button.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/core/extensions/padding_extension.dart';
+import 'package:movies/core/widgets/custom_elevated_button.dart';
 
 class OnboardingItem extends StatelessWidget {
   const OnboardingItem({

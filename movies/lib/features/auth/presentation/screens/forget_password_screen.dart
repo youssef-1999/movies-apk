@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/common/app_colors.dart';
-import 'package:movies/extensions/padding_extension.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/core/extensions/padding_extension.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_state.dart';
 import 'package:movies/gen/assets.gen.dart';
-import 'package:movies/services/auth_service.dart';
-import 'package:movies/widgets/custom_elevated_button.dart';
-import 'package:movies/widgets/custom_text_field.dart';
+import 'package:movies/core/widgets/custom_elevated_button.dart';
+import 'package:movies/core/widgets/custom_text_field.dart';
 
 class ForgetPassword extends StatefulWidget {
   static const String routeName = '/forget-password';
@@ -18,45 +19,15 @@ class ForgetPassword extends StatefulWidget {
 class _ForgetPasswordState extends State<ForgetPassword> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _authService = AuthService();
-  bool _isLoading = false;
 
-  Future<void> _resetPassword() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    setState(() => _isLoading = true);
-    try {
-      await _authService.resetPassword(_emailController.text.trim());
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password reset link sent! Check your email.'),
-          backgroundColor: AppColors.green,
-        ),
+  void _resetPassword() {
+  if (!(_formKey.currentState?.validate() ?? false)) return;
+  context.read<AuthCubit>().forgetPassword(
+        _emailController.text.trim(),
       );
-      // Go back to the login screen
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message ?? 'Password reset failed!'),
-          backgroundColor: AppColors.red,
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: AppColors.red,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
+}
+  
   @override
   void dispose() {
     _emailController.dispose();
@@ -65,8 +36,25 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+    return BlocConsumer<AuthCubit, AuthState>(
+    // 👂 listener: do ONE-TIME things (SnackBar, navigation)
+    listener: (context, state) {
+      if (state is AuthSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password reset link sent! Check your email.'), backgroundColor: AppColors.green),
+        );
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      } else if (state is AuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+        );
+      }
+    },
+    // 🎨 builder: DRAW the screen (rebuilds on every state)
+    builder: (context, state) {
+      final isLoading = state is AuthLoading;
+      return Form(
+        key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -110,8 +98,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 ).paddingSymmetric(horizontal: 16),
                 const SizedBox(height: 23),
                 CustomElevatedButton(
-                  text: _isLoading ? 'Loading...' : 'Reset Password',
-                  onPressed: _isLoading ? null : _resetPassword,
+                  text: isLoading ? 'Loading...' : 'Reset Password',
+                  onPressed: isLoading ? null : _resetPassword,
                 ).paddingOnly(left: 19, right: 19),
               ],
             ),
@@ -119,5 +107,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         ),
       ),
     );
+    },);
   }
 }

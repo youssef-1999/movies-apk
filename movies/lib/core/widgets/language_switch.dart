@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movies/common/app_colors.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/gen/assets.gen.dart';
 
 /// A pill-shaped toggle between English ('en') and Arabic ('ar').

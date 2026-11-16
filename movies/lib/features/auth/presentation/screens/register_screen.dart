@@ -1,14 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:movies/common/app_colors.dart';
-import 'package:movies/extensions/padding_extension.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/core/theme/app_colors.dart';
+import 'package:movies/core/extensions/padding_extension.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:movies/features/auth/presentation/cubit/auth_state.dart';
 import 'package:movies/gen/assets.gen.dart';
-import 'package:movies/screens/auth/login_screen.dart';
-import 'package:movies/services/auth_service.dart';
-import 'package:movies/widgets/custom_elevated_button.dart';
-import 'package:movies/widgets/custom_text_field.dart';
-import 'package:movies/widgets/language_switch.dart';
+import 'package:movies/core/widgets/custom_elevated_button.dart';
+import 'package:movies/core/widgets/custom_text_field.dart';
+import 'package:movies/core/widgets/language_switch.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
@@ -28,57 +28,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneController = TextEditingController();
   String _languageCode = 'en';
 
-final _authService = AuthService();   // add as a field, import auth_service.dart
-bool _isLoading = false;
 
-Future<void> _register() async {
-  if (!(_formKey.currentState?.validate() ?? false)) {
-    // keep your existing "Please fix the errors" SnackBar here
-    return;
-  }
-  setState(() => _isLoading = true);
-  try {
-    await _authService.register(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-  await   FirebaseAuth.instance.currentUser?.updateDisplayName(_nameController.text.trim());
-    if (!mounted) return;
-    // show your green success SnackBar, then navigate to home/login
-    // Firebase signs the new user in automatically; sign out so they log in manually.
-    await _authService.logout();
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Registered successfully! Please login.'),
-        backgroundColor: AppColors.green,
-      ),
-    );
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      LoginScreen.routeName,
-      (route) => false,
-    );
-  } on FirebaseAuthException catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.message ?? 'Registration failed!'),
-        backgroundColor: AppColors.red,
-      ),
-    );
-  } catch (e) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString()),
-        backgroundColor: AppColors.red,
-      ),
-    );
-  } finally {
-    if (mounted) setState(() => _isLoading = false);
-  }
+  void _register() {
+  if (!(_formKey.currentState?.validate() ?? false)) return;
+  context.read<AuthCubit>().register(
+        _nameController.text.trim(),
+        _emailController.text.trim(),
+        _passwordController.text,
+        _phoneController.text.trim(),
+      );
 }
+
 
 
   @override
@@ -93,8 +53,25 @@ Future<void> _register() async {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+    return BlocConsumer<AuthCubit, AuthState>(
+    // 👂 listener: do ONE-TIME things (SnackBar, navigation)
+    listener: (context, state) {
+      if (state is AuthSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registered successfully!'), backgroundColor: AppColors.green),
+        );
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      } else if (state is AuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+        );
+      }
+    },
+    // 🎨 builder: DRAW the screen (rebuilds on every state)
+    builder: (context, state) {
+      final isLoading = state is AuthLoading;
+      return Form(
+        key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -201,8 +178,8 @@ Future<void> _register() async {
                 SizedBox(height: 23),
                 
                 CustomElevatedButton(
-                  text:_isLoading ? 'Loading...' : "Create Account",
-                  onPressed: _isLoading ? null : _register,
+                  text: isLoading ? 'Loading...' : "Create Account",
+                  onPressed: isLoading ? null : _register,
 
                 ).paddingOnly(left: 19, right: 19),
                 RichText(
@@ -237,6 +214,8 @@ Future<void> _register() async {
           ),
         ),
       ),
+      );
+    },
     );
   }
 }
