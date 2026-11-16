@@ -58,9 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     listener: (context, state) {
       if (state is AuthSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Logged in successfully!'), backgroundColor: AppColors.green),
+          const SnackBar(content: Text('Registered successfully!'), backgroundColor: AppColors.green),
         );
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       } else if (state is AuthError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(state.message), backgroundColor: AppColors.red),

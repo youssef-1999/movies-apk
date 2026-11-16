@@ -15,6 +15,8 @@ import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:movies/core/di/injection.dart' as _i843;
+import 'package:movies/features/auth/data/datasources/auth_local_data_source.dart'
+    as _i1026;
 import 'package:movies/features/auth/data/datasources/auth_remote_data_source.dart'
     as _i803;
 import 'package:movies/features/auth/data/repositories/auth_repository_impl.dart'
@@ -33,15 +35,20 @@ import 'package:movies/features/auth/domain/usecases/signout_usecase.dart'
     as _i782;
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart'
     as _i390;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final firebaseModule = _$FirebaseModule();
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => firebaseModule.sharedPreferences,
+      preResolve: true,
+    );
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i974.FirebaseFirestore>(
       () => firebaseModule.firebaseFirestore,
@@ -52,8 +59,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i974.FirebaseFirestore>(),
       ),
     );
+    gh.lazySingleton<_i1026.AuthLocalDataSource>(
+      () => _i1026.AuthLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i710.AuthRepository>(
-      () => _i388.AuthRepositoryImpl(gh<_i803.AuthRemoteDataSource>()),
+      () => _i388.AuthRepositoryImpl(
+        gh<_i803.AuthRemoteDataSource>(),
+        gh<_i1026.AuthLocalDataSource>(),
+      ),
     );
     gh.factory<_i97.ForgetPasswordUsecase>(
       () => _i97.ForgetPasswordUsecase(gh<_i710.AuthRepository>()),

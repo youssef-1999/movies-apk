@@ -4,20 +4,31 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movies/core/di/injection.dart';
 import 'package:movies/core/routes/app_routes.dart';
 import 'package:movies/core/theme/app_theme.dart';
+import 'package:movies/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:movies/firebase_options.dart';
+import 'package:movies/screens/home_screen.dart';
+import 'package:movies/screens/onboarding_screens.dart';
 
-Future<void> main() async{
-   WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  configureDependencies();   // 👈 add this
+  // Must be awaited: SharedPreferences is @preResolve, so it isn't
+  // registered until init() completes.
+  await configureDependencies();
 
-  runApp(MainApp());}
+  final token = getIt<AuthLocalDataSource>().getToken();
+  final initialRoute = token != null
+      ? HomeScreen.routeName // already logged in
+      : OnboardingScreens.routeName;
+
+  runApp(MainApp(initialRoute: initialRoute));
+}
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+  final String initialRoute;
+  const MainApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,7 @@ class MainApp extends StatelessWidget {
       builder: (context, child) => MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dark,
-        initialRoute: AppRoutes.initialRoute,
+        initialRoute: initialRoute,
         routes: AppRoutes.routes,
       ),
     );
