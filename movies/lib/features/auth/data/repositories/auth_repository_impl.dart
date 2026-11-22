@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:movies/core/errors/failures.dart';
 import 'package:movies/features/auth/data/datasources/auth_local_data_source.dart';
@@ -33,6 +34,10 @@ final AuthLocalDataSource _authLocalDataSource;
       final user = await _authRemoteDataSource.signInWithGoogle();
       await _authLocalDataSource.saveToken(user.uid);
       return Right(user.toEntity());                          // ✅ success
+    } on GoogleSignInException catch (e) {
+      return Left(AuthFailure(e.code == GoogleSignInExceptionCode.canceled
+          ? 'Google sign-in was cancelled'
+          : (e.description ?? 'Google sign-in failed')));
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));  // ❌ Firebase error
     } catch (e) {
@@ -47,7 +52,7 @@ final AuthLocalDataSource _authLocalDataSource;
       await _authLocalDataSource.saveToken(user.uid);
       return Right(user.toEntity());                          // ✅ success
     } on FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Login failed'));  // ❌ Firebase error
+      return Left(AuthFailure(e.message ?? 'Registration failed'));  // ❌ Firebase error
     } catch (e) {
       return Left(AuthFailure(e.toString()));                 // ❌ any other error
     }

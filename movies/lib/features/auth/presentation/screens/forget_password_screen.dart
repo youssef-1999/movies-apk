@@ -39,11 +39,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     return BlocConsumer<AuthCubit, AuthState>(
     // 👂 listener: do ONE-TIME things (SnackBar, navigation)
     listener: (context, state) {
-      if (state is AuthSuccess) {
+      if (state is PasswordResetSent) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Password reset link sent! Check your email.'), backgroundColor: AppColors.green),
         );
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        Navigator.pop(context); // back to login
       } else if (state is AuthError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(state.message), backgroundColor: AppColors.red),

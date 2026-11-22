@@ -132,11 +132,8 @@ void _loginWithGoogle() {
                   ],
                 ),
                 CustomElevatedButton(
-                  text: "Login",
-                  onPressed: () {
-                    // Handle login logic
-                   isLoading ? null : _login();
-                  },
+                  text: isLoading ? 'Loading...' : 'Login',
+                  onPressed: isLoading ? null : _login,
                 ).paddingOnly(left: 19, right: 19),
                 RichText(
                   text: TextSpan(

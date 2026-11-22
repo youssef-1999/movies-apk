@@ -19,6 +19,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   bool _googleInitialized = false;
 
+  // GoogleSignIn v7 must be initialized once before any other call
+  // (including signOut).
+  Future<GoogleSignIn> _google() async {
+    final google = GoogleSignIn.instance;
+    if (!_googleInitialized) {
+      await google.initialize(
+        serverClientId: '168533500993-iipise1g6cr7pf8cffdbd03eki91mguk.apps.googleusercontent.com',
+      );
+      _googleInitialized = true;
+    }
+    return google;
+  }
+
   @override
   Future<UserModel> signInWithEmail({required String email, required String password}) async {
     final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
@@ -36,13 +49,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> signInWithGoogle() async {
-    final google = GoogleSignIn.instance;
-    if (!_googleInitialized) {
-      await google.initialize(
-        serverClientId: '168533500993-iipise1g6cr7pf8cffdbd03eki91mguk.apps.googleusercontent.com',
-      );
-      _googleInitialized = true;
-    }
+    final google = await _google();
     final account = await google.authenticate(); // throws GoogleSignInException on cancel
     final idToken = account.authentication.idToken;
     if (idToken == null) throw Exception('Google returned no idToken');
@@ -58,7 +65,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> signOut() async {
-    await GoogleSignIn.instance.signOut();
+    // A Google sign-out failure must not block the Firebase sign-out.
+    try {
+      await (await _google()).signOut();
+    } catch (_) {}
     await _auth.signOut();
   }
 }

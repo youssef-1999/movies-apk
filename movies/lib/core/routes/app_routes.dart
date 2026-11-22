@@ -5,7 +5,7 @@ import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/auth/presentation/screens/register_screen.dart';
-import 'package:movies/screens/home_screen.dart';
+import 'package:movies/features/home/presentation/screens/home_screen.dart';
 import 'package:movies/screens/onboarding_screens.dart';
 
 abstract class AppRoutes {

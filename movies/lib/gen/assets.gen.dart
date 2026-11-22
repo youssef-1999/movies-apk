@@ -14,6 +14,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/compass.svg
+  String get compass => 'assets/icons/compass.svg';
+
   /// File path: assets/icons/email.svg
   String get email => 'assets/icons/email.svg';
 
@@ -22,6 +25,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/google.svg
   String get google => 'assets/icons/google.svg';
+
+  /// File path: assets/icons/home.svg
+  String get home => 'assets/icons/home.svg';
 
   /// File path: assets/icons/name.svg
   String get name => 'assets/icons/name.svg';
@@ -32,8 +38,25 @@ class $AssetsIconsGen {
   /// File path: assets/icons/phone.svg
   String get phone => 'assets/icons/phone.svg';
 
+  /// File path: assets/icons/profile.svg
+  String get profile => 'assets/icons/profile.svg';
+
+  /// File path: assets/icons/search.svg
+  String get search => 'assets/icons/search.svg';
+
   /// List of all assets
-  List<String> get values => [email, eyesOff, google, name, password, phone];
+  List<String> get values => [
+    compass,
+    email,
+    eyesOff,
+    google,
+    home,
+    name,
+    password,
+    phone,
+    profile,
+    search,
+  ];
 }
 
 class $AssetsImagesGen {
@@ -45,6 +68,10 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ar.png
   AssetGenImage get ar => const AssetGenImage('assets/images/ar.png');
+
+  /// File path: assets/images/available_now.png
+  AssetGenImage get availableNow =>
+      const AssetGenImage('assets/images/available_now.png');
 
   /// File path: assets/images/en.png
   AssetGenImage get en => const AssetGenImage('assets/images/en.png');
@@ -64,16 +91,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/movie5.png
   AssetGenImage get movie5 => const AssetGenImage('assets/images/movie5.png');
 
+  /// File path: assets/images/watch_now.png
+  AssetGenImage get watchNow =>
+      const AssetGenImage('assets/images/watch_now.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     forgotPasswordBro1,
     ar,
+    availableNow,
     en,
     movie1,
     movie2,
     movie3,
     movie4,
     movie5,
+    watchNow,
   ];
 }
 
@@ -84,8 +117,40 @@ class $AssetsPostersGen {
   AssetGenImage get moviesPosters =>
       const AssetGenImage('assets/posters/Movies Posters.png');
 
+  /// File path: assets/posters/avengers_endgame.png
+  AssetGenImage get avengersEndgame =>
+      const AssetGenImage('assets/posters/avengers_endgame.png');
+
+  /// File path: assets/posters/captain_america.png
+  AssetGenImage get captainAmerica =>
+      const AssetGenImage('assets/posters/captain_america.png');
+
+  /// File path: assets/posters/doctor_strange.png
+  AssetGenImage get doctorStrange =>
+      const AssetGenImage('assets/posters/doctor_strange.png');
+
+  /// File path: assets/posters/hobbs_shaw.png
+  AssetGenImage get hobbsShaw =>
+      const AssetGenImage('assets/posters/hobbs_shaw.png');
+
+  /// File path: assets/posters/iron_man_3.png
+  AssetGenImage get ironMan3 =>
+      const AssetGenImage('assets/posters/iron_man_3.png');
+
+  /// File path: assets/posters/movie_1917.png
+  AssetGenImage get movie1917 =>
+      const AssetGenImage('assets/posters/movie_1917.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [moviesPosters];
+  List<AssetGenImage> get values => [
+    moviesPosters,
+    avengersEndgame,
+    captainAmerica,
+    doctorStrange,
+    hobbsShaw,
+    ironMan3,
+    movie1917,
+  ];
 }
 
 class $AssetsSplashGen {

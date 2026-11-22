@@ -84,7 +84,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
 
   void _onNext() {
     if (_isLastPage) {
-      Navigator.pushNamed(context, LoginScreen.routeName);
+      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       return;
     }
     _goTo(_currentPage + 1);

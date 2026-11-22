@@ -6,7 +6,7 @@ import 'package:movies/core/routes/app_routes.dart';
 import 'package:movies/core/theme/app_theme.dart';
 import 'package:movies/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:movies/firebase_options.dart';
-import 'package:movies/screens/home_screen.dart';
+import 'package:movies/features/home/presentation/screens/home_screen.dart';
 import 'package:movies/screens/onboarding_screens.dart';
 
 Future<void> main() async {
