@@ -46,7 +46,7 @@ class _SearchView extends StatelessWidget {
                   hintText: 'Search',
                   hintStyle: const TextStyle(color: Colors.white54),
                   prefixIcon: const ImageIcon(
-                   AssetImage(  'assets/icons/search.png'),
+                   AssetImage(  'assets/icons/search2.png'),
                     color: Colors.white54,
                   ),
                   filled: true,

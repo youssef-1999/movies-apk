@@ -1,8 +1,10 @@
+import 'package:injectable/injectable.dart';
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_local_data_source.dart';
 import '../models/profile_model.dart';
 
+@LazySingleton(as: ProfileRepository)
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileLocalDataSource localDataSource;
   ProfileRepositoryImpl(this.localDataSource);
@@ -15,5 +17,5 @@ class ProfileRepositoryImpl implements ProfileRepository {
       localDataSource.saveProfile(ProfileModel.fromEntity(profile));
 
   @override
-  Future<void> deleteAccount() => localDataSource.clear();
+  Future<void> deleteProfile() => localDataSource.clear();
 }

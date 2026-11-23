@@ -44,8 +44,11 @@ class $AssetsIconsGen {
   /// File path: assets/icons/search.svg
   String get search => 'assets/icons/search.svg';
 
+  /// File path: assets/icons/search2.png
+  AssetGenImage get search2 => const AssetGenImage('assets/icons/search2.png');
+
   /// List of all assets
-  List<String> get values => [
+  List<dynamic> get values => [
     compass,
     email,
     eyesOff,
@@ -56,6 +59,7 @@ class $AssetsIconsGen {
     phone,
     profile,
     search,
+    search2,
   ];
 }
 
@@ -75,6 +79,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/available_now.png
   AssetGenImage get availableNow =>
       const AssetGenImage('assets/images/available_now.png');
+
+  /// Directory path: assets/images/avatar
+  $AssetsImagesAvatarGen get avatar => const $AssetsImagesAvatarGen();
 
   /// File path: assets/images/en.png
   AssetGenImage get en => const AssetGenImage('assets/images/en.png');
@@ -182,6 +189,59 @@ class $AssetsSplashGen {
     splashLogo,
     splashLogoAndroid12,
     splashScreen,
+  ];
+}
+
+class $AssetsImagesAvatarGen {
+  const $AssetsImagesAvatarGen();
+
+  /// File path: assets/images/avatar/pfp1.png
+  AssetGenImage get pfp1 =>
+      const AssetGenImage('assets/images/avatar/pfp1.png');
+
+  /// File path: assets/images/avatar/pfp2.png
+  AssetGenImage get pfp2 =>
+      const AssetGenImage('assets/images/avatar/pfp2.png');
+
+  /// File path: assets/images/avatar/pfp3.png
+  AssetGenImage get pfp3 =>
+      const AssetGenImage('assets/images/avatar/pfp3.png');
+
+  /// File path: assets/images/avatar/pfp4.png
+  AssetGenImage get pfp4 =>
+      const AssetGenImage('assets/images/avatar/pfp4.png');
+
+  /// File path: assets/images/avatar/pfp5.png
+  AssetGenImage get pfp5 =>
+      const AssetGenImage('assets/images/avatar/pfp5.png');
+
+  /// File path: assets/images/avatar/pfp6.png
+  AssetGenImage get pfp6 =>
+      const AssetGenImage('assets/images/avatar/pfp6.png');
+
+  /// File path: assets/images/avatar/pfp7.png
+  AssetGenImage get pfp7 =>
+      const AssetGenImage('assets/images/avatar/pfp7.png');
+
+  /// File path: assets/images/avatar/pfp8.png
+  AssetGenImage get pfp8 =>
+      const AssetGenImage('assets/images/avatar/pfp8.png');
+
+  /// File path: assets/images/avatar/pfp9.png
+  AssetGenImage get pfp9 =>
+      const AssetGenImage('assets/images/avatar/pfp9.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    pfp1,
+    pfp2,
+    pfp3,
+    pfp4,
+    pfp5,
+    pfp6,
+    pfp7,
+    pfp8,
+    pfp9,
   ];
 }
 

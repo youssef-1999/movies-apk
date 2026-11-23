@@ -1,4 +1,5 @@
 import '../../domain/entities/profile_entity.dart';
+import 'package:movies/features/search_feature/features/search/domain/entities/movie.dart';
 
 abstract class ProfileState {}
 
@@ -8,7 +9,8 @@ class ProfileLoading extends ProfileState {}
 
 class ProfileLoaded extends ProfileState {
   final ProfileEntity profile;
-  ProfileLoaded(this.profile);
+  final List<Movie> watchlist;
+  ProfileLoaded(this.profile, [this.watchlist = const []]);
 }
 
 class ProfileError extends ProfileState {

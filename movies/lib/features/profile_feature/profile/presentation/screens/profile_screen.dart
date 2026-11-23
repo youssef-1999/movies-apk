@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies/core/di/injection.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/presentation/cubit/auth_state.dart';
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/profile_feature/profile/pfps.dart';
 import '../../data/datasources/profile_local_data_source.dart';
-import '../../data/repositories/profile_repository_impl.dart';
-import '../../domain/usecases/profile_usecases.dart';
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
 import '../widgets/profile_tabs.dart';
@@ -19,14 +18,11 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Swap this manual wiring for your DI (get_it, etc.) if you use one.
-    final repo = ProfileRepositoryImpl(ProfileLocalDataSourceImpl());
-    return BlocProvider(
-      create: (_) => ProfileCubit(
-        getProfileUseCase: GetProfileUseCase(repo),
-        updateProfileUseCase: UpdateProfileUseCase(repo),
-        deleteAccountUseCase: DeleteAccountUseCase(repo),
-      )..loadProfile(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<ProfileCubit>()..loadProfile()),
+        BlocProvider(create: (_) => getIt<AuthCubit>()),
+      ],
       child: const _ProfileView(),
     );
   }
@@ -38,22 +34,25 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
-    listener: (context, state) async {
-      if (state is AuthSignedOut) {
-        // Don't leak this user's profile to the next one who logs in.
-        await ProfileLocalDataSourceImpl().clear();
-        if (!context.mounted) return;
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          LoginScreen.routeName,
-          (route) => false,
-        );
-      } else if (state is AuthError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
-        );
-      }
-    },
+      listener: (context, state) async {
+        if (state is AuthSignedOut) {
+          // Don't leak this user's profile to the next one who logs in.
+          await ProfileLocalDataSourceImpl().clear();
+          if (!context.mounted) return;
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            LoginScreen.routeName,
+            (route) => false,
+          );
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.red,
+            ),
+          );
+        }
+      },
       child: Scaffold(
         backgroundColor: AppColors.black,
         body: SafeArea(
@@ -72,7 +71,8 @@ class _ProfileView extends StatelessWidget {
                   ),
                 );
               }
-              final p = (state as ProfileLoaded).profile;
+              final loaded = state as ProfileLoaded;
+              final p = loaded.profile;
               return Column(
                 children: [
                   Container(
@@ -90,7 +90,10 @@ class _ProfileView extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
-                            _Stat(value: p.wishListCount, label: 'Wish List'),
+                            _Stat(
+                              value: loaded.watchlist.length,
+                              label: 'Wish List',
+                            ),
                             const SizedBox(width: 32),
                             _Stat(value: p.historyCount, label: 'History'),
                             const SizedBox(width: 16),
@@ -152,7 +155,7 @@ class _ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Expanded(child: ProfileTabs()),
+                Expanded(child: ProfileTabs(watchlist: loaded.watchlist)),
                 ],
               );
             },

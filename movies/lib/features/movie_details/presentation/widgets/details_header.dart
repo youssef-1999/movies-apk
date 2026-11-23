@@ -10,11 +10,14 @@ class DetailsHeader extends StatelessWidget {
   final VoidCallback? onPlay;
   final VoidCallback? onBookmark;
 
+  final bool isBookmarked;
+
   const DetailsHeader({
     super.key,
     required this.movie,
     this.onPlay,
     this.onBookmark,
+    this.isBookmarked = false,
   });
 
   @override
@@ -50,13 +53,19 @@ class DetailsHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new,
-                        color: AppColors.white, size: 28),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.white,
+                      size: 28,
+                    ),
                     onPressed: () => Navigator.maybePop(context),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.bookmark,
-                        color: AppColors.white, size: 32),
+                                    IconButton(
+                    icon: Icon(
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      color: isBookmarked ? AppColors.yellow : AppColors.white,
+                      size: 32,
+                    ),
                     onPressed: onBookmark,
                   ),
                 ],
@@ -119,8 +128,11 @@ class _PlayButton extends StatelessWidget {
             shape: BoxShape.circle,
             color: AppColors.yellow,
           ),
-          child: const Icon(Icons.play_arrow_rounded,
-              color: AppColors.white, size: 56),
+          child: const Icon(
+            Icons.play_arrow_rounded,
+            color: AppColors.white,
+            size: 56,
+          ),
         ),
       ),
     );

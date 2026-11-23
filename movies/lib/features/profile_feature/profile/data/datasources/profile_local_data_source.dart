@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/profile_model.dart';
 
@@ -8,6 +9,7 @@ abstract class ProfileLocalDataSource {
   Future<void> clear();
 }
 
+@LazySingleton(as: ProfileLocalDataSource)
 class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   static const _kName = 'profile_name';
   static const _kPhone = 'profile_phone';
@@ -18,7 +20,7 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   @override
   Future<ProfileModel> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    // Fall back to the signed-in Firebase user instead of a placeholder name.
+   
     final user = FirebaseAuth.instance.currentUser;
     return ProfileModel(
       name: prefs.getString(_kName) ?? user?.displayName ?? '',

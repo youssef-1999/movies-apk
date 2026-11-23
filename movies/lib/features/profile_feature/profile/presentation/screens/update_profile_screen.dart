@@ -79,7 +79,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) async {
         if (state is AccountDeleted) {
-          await context.read<ProfileCubit>().deleteAccount();
+          await context.read<ProfileCubit>().deleteLocalProfile();
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(
             context,
