@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/search_feature/features/search/domain/entities/movie.dart';
 
 /// Poster with the rating badge in the top-left corner.
@@ -20,7 +21,7 @@ class MoviePosterCard extends StatelessWidget {
             Image.network(
               movie.posterUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const ColoredBox(
+              errorBuilder: (_, _, _) => const ColoredBox(
                 color: Color(0xFF282A28),
                 child: Icon(Icons.broken_image, color: Colors.white38),
               ),
@@ -42,7 +43,7 @@ class MoviePosterCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                     const SizedBox(width: 2),
-                    const Icon(Icons.star, color: Color(0xFFF6BD00), size: 12),
+                    const Icon(Icons.star, color: AppColors.yellow, size: 12),
                   ],
                 ),
               ),

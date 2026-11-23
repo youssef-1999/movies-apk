@@ -30,7 +30,7 @@ Future<int?> showAvatarPicker(BuildContext context, int selected) {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.yellow.withOpacity(.35)
+                    ? AppColors.yellow.withValues(alpha: .35)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(

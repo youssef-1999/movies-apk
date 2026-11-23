@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/profile_model.dart';
 
@@ -17,9 +18,11 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   @override
   Future<ProfileModel> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
+    // Fall back to the signed-in Firebase user instead of a placeholder name.
+    final user = FirebaseAuth.instance.currentUser;
     return ProfileModel(
-      name: prefs.getString(_kName) ?? 'John Safwat',
-      phone: prefs.getString(_kPhone) ?? '',
+      name: prefs.getString(_kName) ?? user?.displayName ?? '',
+      phone: prefs.getString(_kPhone) ?? user?.phoneNumber ?? '',
       avatarIndex: prefs.getInt(_kAvatar) ?? 1,
       wishListCount: prefs.getInt(_kWish) ?? 0,
       historyCount: prefs.getInt(_kHistory) ?? 0,

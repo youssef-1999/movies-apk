@@ -38,12 +38,19 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
-    listener: (context, state) {
+    listener: (context, state) async {
       if (state is AuthSignedOut) {
-        Navigator.pushAndRemoveUntil(
+        // Don't leak this user's profile to the next one who logs in.
+        await ProfileLocalDataSourceImpl().clear();
+        if (!context.mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          LoginScreen.routeName,
           (route) => false,
+        );
+      } else if (state is AuthError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
         );
       }
     },

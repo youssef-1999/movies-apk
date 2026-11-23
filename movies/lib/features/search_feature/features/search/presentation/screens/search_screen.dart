@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:movies/core/di/injection.dart';
@@ -7,9 +8,9 @@ import 'package:movies/features/search_feature/features/search/presentation/cubi
 import 'package:movies/features/search_feature/features/search/presentation/cubit/search_state.dart';
 import 'package:movies/features/search_feature/features/search/presentation/widgets/movie_poster_card.dart';
 
-const _background = Color(0xFF121312);
-const _fieldColor = Color(0xFF282A28);
-const _yellow = Color(0xFFF6BD00);
+const _background = AppColors.black;
+const _fieldColor = AppColors.darkGrey;
+const _yellow = AppColors.yellow;
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
