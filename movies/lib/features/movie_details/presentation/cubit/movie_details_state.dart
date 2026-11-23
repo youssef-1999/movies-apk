@@ -15,16 +15,15 @@ class MovieDetailsLoading extends MovieDetailsState {
 
 class MovieDetailsSuccess extends MovieDetailsState {
   final MovieDetails movie;
-
-  /// Similar movies. Empty if the suggestions request failed.
   final List<Movie> similar;
+  final bool isBookmarked;
 
-  const MovieDetailsSuccess(this.movie, this.similar);
+  const MovieDetailsSuccess(this.movie, this.similar,
+      {this.isBookmarked = false});
 
   @override
-  List<Object?> get props => [movie, similar];
+  List<Object?> get props => [movie, similar, isBookmarked];
 }
-
 class MovieDetailsError extends MovieDetailsState {
   final String message;
 

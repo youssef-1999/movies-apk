@@ -26,7 +26,7 @@ class BottomBar extends StatelessWidget {
             onTap: onTap,
             items: [
               _item(Assets.icons.home),
-              _item(Assets.icons.search ),
+              _item(Assets.icons.search),
               _item(Assets.icons.compass ),
               _item(Assets.icons.profile),
             ],

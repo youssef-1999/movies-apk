@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:movies/core/theme/app_colors.dart';
-import 'package:movies/features/profile_feature/profile/pfps.dart';
+import 'package:movies/features/movie_details/presentation/screens/movie_details_screen.dart';
+import 'package:movies/features/search_feature/features/search/domain/entities/movie.dart';
+import 'package:movies/features/search_feature/features/search/presentation/widgets/movie_poster_card.dart';
 
-
-/// Icon-only tabs. Replace the empty-state bodies with real lists later.
 class ProfileTabs extends StatelessWidget {
-  const ProfileTabs({super.key});
+  final List<Movie> watchlist;
+  const ProfileTabs({super.key, required this.watchlist});
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Column(
-        children: const [
-          TabBar(
+        children: [
+          const TabBar(
             indicatorColor: AppColors.yellow,
             labelColor: AppColors.yellow,
             unselectedLabelColor: Colors.white,
@@ -26,12 +27,40 @@ class ProfileTabs extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                _EmptyState(), // TODO(logic): wish list movies
-                _EmptyState(), // TODO(logic): history movies
+                _MoviesGrid(movies: watchlist),
+                const _EmptyState(), // TODO(logic): history
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MoviesGrid extends StatelessWidget {
+  final List<Movie> movies;
+  const _MoviesGrid({required this.movies});
+
+  @override
+  Widget build(BuildContext context) {
+    if (movies.isEmpty) return const _EmptyState();
+    return GridView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: movies.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.68,
+      ),
+      itemBuilder: (context, i) => MoviePosterCard(
+        movie: movies[i],
+        onTap: () => Navigator.pushNamed(
+          context,
+          MovieDetailsScreen.routeName,
+          arguments: movies[i].id,
+        ),
       ),
     );
   }
@@ -42,5 +71,5 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Center(child: Image.asset(ProfileAssets.popcorn, width: 120));
+      Center(child: Image.asset('assets/images/Empty 1.png', width: 120));
 }

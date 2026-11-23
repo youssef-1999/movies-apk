@@ -30,7 +30,11 @@ class MovieDetailsScreen extends StatelessWidget {
         body: BlocBuilder<MovieDetailsCubit, MovieDetailsState>(
           builder: (context, state) {
             if (state is MovieDetailsSuccess) {
-              return _DetailsBody(movie: state.movie, similar: state.similar);
+              return _DetailsBody(
+                movie: state.movie,
+                similar: state.similar,
+                isBookmarked: state.isBookmarked,
+              );
             }
             if (state is MovieDetailsError) {
               return _ErrorView(
@@ -51,8 +55,13 @@ class MovieDetailsScreen extends StatelessWidget {
 class _DetailsBody extends StatelessWidget {
   final MovieDetails movie;
   final List<Movie> similar;
+  final bool isBookmarked;
 
-  const _DetailsBody({required this.movie, required this.similar});
+  const _DetailsBody({
+    required this.movie,
+    required this.similar,
+    required this.isBookmarked,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +71,12 @@ class _DetailsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          DetailsHeader(movie: movie),
+          DetailsHeader(
+            movie: movie,
+            isBookmarked: isBookmarked,
+            onBookmark: () =>
+                context.read<MovieDetailsCubit>().toggleBookmark(),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             child: Column(
@@ -82,8 +96,10 @@ class _DetailsBody extends StatelessWidget {
                     onPressed: () {},
                     child: const Text(
                       'Watch',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -92,18 +108,23 @@ class _DetailsBody extends StatelessWidget {
                   children: [
                     Expanded(
                       child: StatChip(
-                          icon: Icons.favorite, value: '${movie.likeCount}'),
+                        icon: Icons.favorite,
+                        value: '${movie.likeCount}',
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatChip(
-                          icon: Icons.access_time_filled,
-                          value: '${movie.runtime}'),
+                        icon: Icons.access_time_filled,
+                        value: '${movie.runtime}',
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatChip(
-                          icon: Icons.star_rounded, value: '${movie.rating}'),
+                        icon: Icons.star_rounded,
+                        value: '${movie.rating}',
+                      ),
                     ),
                   ],
                 ),
@@ -133,11 +154,11 @@ class _DetailsBody extends StatelessWidget {
                     itemCount: similar.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.68,
-                    ),
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.68,
+                        ),
                     itemBuilder: (context, index) => MoviePosterCard(
                       movie: similar[index],
                       onTap: () => Navigator.pushReplacementNamed(
@@ -154,7 +175,10 @@ class _DetailsBody extends StatelessWidget {
                   Text(
                     movie.description,
                     style: const TextStyle(
-                        color: AppColors.white, fontSize: 16, height: 1.4),
+                      color: AppColors.white,
+                      fontSize: 16,
+                      height: 1.4,
+                    ),
                   ),
                 ],
                 if (movie.cast.isNotEmpty) ...[
@@ -176,7 +200,9 @@ class _DetailsBody extends StatelessWidget {
                       for (final genre in movie.genres)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.darkGrey,
                             borderRadius: BorderRadius.circular(12),
@@ -184,7 +210,9 @@ class _DetailsBody extends StatelessWidget {
                           child: Text(
                             genre,
                             style: const TextStyle(
-                                color: AppColors.white, fontSize: 16),
+                              color: AppColors.white,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                     ],
@@ -239,14 +267,18 @@ class _ErrorView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(message,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white70)),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white70),
+                ),
                 const SizedBox(height: 12),
                 TextButton(
                   onPressed: onRetry,
-                  child: const Text('Retry',
-                      style: TextStyle(color: AppColors.yellow)),
+                  child: const Text(
+                    'Retry',
+                    style: TextStyle(color: AppColors.yellow),
+                  ),
                 ),
               ],
             ),

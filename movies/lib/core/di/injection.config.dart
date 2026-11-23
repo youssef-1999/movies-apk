@@ -45,6 +45,16 @@ import 'package:movies/features/movie_details/domain/usecases/movie_details_usec
     as _i823;
 import 'package:movies/features/movie_details/presentation/cubit/movie_details_cubit.dart'
     as _i334;
+import 'package:movies/features/profile_feature/profile/data/datasources/profile_local_data_source.dart'
+    as _i900;
+import 'package:movies/features/profile_feature/profile/data/repositories/profile_repository_impl.dart'
+    as _i297;
+import 'package:movies/features/profile_feature/profile/domain/repositories/profile_repository.dart'
+    as _i528;
+import 'package:movies/features/profile_feature/profile/domain/usecases/profile_usecases.dart'
+    as _i261;
+import 'package:movies/features/profile_feature/profile/presentation/cubit/profile_cubit.dart'
+    as _i435;
 import 'package:movies/features/search_feature/features/search/data/datasources/search_remote_data_source.dart'
     as _i792;
 import 'package:movies/features/search_feature/features/search/data/repositories/search_repository_impl.dart'
@@ -55,6 +65,14 @@ import 'package:movies/features/search_feature/features/search/domain/usecases/s
     as _i1047;
 import 'package:movies/features/search_feature/features/search/presentation/cubit/search_cubit.dart'
     as _i767;
+import 'package:movies/features/watchlist/data/datasources/watchlist_local_data_source.dart'
+    as _i747;
+import 'package:movies/features/watchlist/data/repositories/watchlist_repository_impl.dart'
+    as _i86;
+import 'package:movies/features/watchlist/domain/repositories/watchlist_repository.dart'
+    as _i175;
+import 'package:movies/features/watchlist/domain/usecases/watchlist_usecases.dart'
+    as _i285;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -85,6 +103,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i792.SearchRemoteDataSource>(
       () => _i792.SearchRemoteDataSourceImpl(),
     );
+    gh.lazySingleton<_i900.ProfileLocalDataSource>(
+      () => _i900.ProfileLocalDataSourceImpl(),
+    );
     gh.lazySingleton<_i1026.AuthLocalDataSource>(
       () => _i1026.AuthLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
     );
@@ -93,8 +114,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i13.MovieDetailsRemoteDataSource>(),
       ),
     );
+    gh.lazySingleton<_i528.ProfileRepository>(
+      () => _i297.ProfileRepositoryImpl(gh<_i900.ProfileLocalDataSource>()),
+    );
     gh.lazySingleton<_i324.SearchRepository>(
       () => _i972.SearchRepositoryImpl(gh<_i792.SearchRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i747.WatchlistLocalDataSource>(
+      () => _i747.WatchlistLocalDataSourceImpl(
+        gh<_i460.SharedPreferences>(),
+        gh<_i1026.AuthLocalDataSource>(),
+      ),
     );
     gh.lazySingleton<_i710.AuthRepository>(
       () => _i388.AuthRepositoryImpl(
@@ -102,8 +132,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1026.AuthLocalDataSource>(),
       ),
     );
+    gh.factory<_i261.GetProfileUseCase>(
+      () => _i261.GetProfileUseCase(gh<_i528.ProfileRepository>()),
+    );
+    gh.factory<_i261.UpdateProfileUseCase>(
+      () => _i261.UpdateProfileUseCase(gh<_i528.ProfileRepository>()),
+    );
+    gh.factory<_i261.DeleteProfileUseCase>(
+      () => _i261.DeleteProfileUseCase(gh<_i528.ProfileRepository>()),
+    );
     gh.lazySingleton<_i1047.SearchMoviesUseCase>(
       () => _i1047.SearchMoviesUseCase(gh<_i324.SearchRepository>()),
+    );
+    gh.lazySingleton<_i175.WatchlistRepository>(
+      () => _i86.WatchlistRepositoryImpl(gh<_i747.WatchlistLocalDataSource>()),
     );
     gh.factory<_i97.ForgetPasswordUsecase>(
       () => _i97.ForgetPasswordUsecase(gh<_i710.AuthRepository>()),
@@ -130,11 +172,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i767.SearchCubit>(
       () => _i767.SearchCubit(gh<_i1047.SearchMoviesUseCase>()),
     );
-    gh.factory<_i334.MovieDetailsCubit>(
-      () => _i334.MovieDetailsCubit(
-        gh<_i823.GetMovieDetailsUseCase>(),
-        gh<_i823.GetMovieSuggestionsUseCase>(),
-      ),
+    gh.lazySingleton<_i285.GetWatchlistUseCase>(
+      () => _i285.GetWatchlistUseCase(gh<_i175.WatchlistRepository>()),
+    );
+    gh.lazySingleton<_i285.IsBookmarkedUseCase>(
+      () => _i285.IsBookmarkedUseCase(gh<_i175.WatchlistRepository>()),
+    );
+    gh.lazySingleton<_i285.ToggleWatchlistUseCase>(
+      () => _i285.ToggleWatchlistUseCase(gh<_i175.WatchlistRepository>()),
+    );
+    gh.lazySingleton<_i285.WatchWatchlistUseCase>(
+      () => _i285.WatchWatchlistUseCase(gh<_i175.WatchlistRepository>()),
     );
     gh.factory<_i390.AuthCubit>(
       () => _i390.AuthCubit(
@@ -143,6 +191,23 @@ extension GetItInjectableX on _i174.GetIt {
         registerUsecase: gh<_i490.RegisterUsecase>(),
         forgetPasswordUsecase: gh<_i97.ForgetPasswordUsecase>(),
         signOutUsecase: gh<_i782.SignoutUsecase>(),
+      ),
+    );
+    gh.factory<_i334.MovieDetailsCubit>(
+      () => _i334.MovieDetailsCubit(
+        gh<_i823.GetMovieDetailsUseCase>(),
+        gh<_i823.GetMovieSuggestionsUseCase>(),
+        gh<_i285.ToggleWatchlistUseCase>(),
+        gh<_i285.IsBookmarkedUseCase>(),
+      ),
+    );
+    gh.factory<_i435.ProfileCubit>(
+      () => _i435.ProfileCubit(
+        gh<_i261.GetProfileUseCase>(),
+        gh<_i261.UpdateProfileUseCase>(),
+        gh<_i261.DeleteProfileUseCase>(),
+        gh<_i285.GetWatchlistUseCase>(),
+        gh<_i285.WatchWatchlistUseCase>(),
       ),
     );
     return this;
