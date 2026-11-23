@@ -35,6 +35,16 @@ import 'package:movies/features/auth/domain/usecases/signout_usecase.dart'
     as _i782;
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart'
     as _i390;
+import 'package:movies/features/search_feature/features/search/data/datasources/search_remote_data_source.dart'
+    as _i792;
+import 'package:movies/features/search_feature/features/search/data/repositories/search_repository_impl.dart'
+    as _i972;
+import 'package:movies/features/search_feature/features/search/domain/repositories/search_repository.dart'
+    as _i324;
+import 'package:movies/features/search_feature/features/search/domain/usecases/search_movies_usecase.dart'
+    as _i1047;
+import 'package:movies/features/search_feature/features/search/presentation/cubit/search_cubit.dart'
+    as _i767;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -59,14 +69,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i974.FirebaseFirestore>(),
       ),
     );
+    gh.lazySingleton<_i792.SearchRemoteDataSource>(
+      () => _i792.SearchRemoteDataSourceImpl(),
+    );
     gh.lazySingleton<_i1026.AuthLocalDataSource>(
       () => _i1026.AuthLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i324.SearchRepository>(
+      () => _i972.SearchRepositoryImpl(gh<_i792.SearchRemoteDataSource>()),
     );
     gh.lazySingleton<_i710.AuthRepository>(
       () => _i388.AuthRepositoryImpl(
         gh<_i803.AuthRemoteDataSource>(),
         gh<_i1026.AuthLocalDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i1047.SearchMoviesUseCase>(
+      () => _i1047.SearchMoviesUseCase(gh<_i324.SearchRepository>()),
     );
     gh.factory<_i97.ForgetPasswordUsecase>(
       () => _i97.ForgetPasswordUsecase(gh<_i710.AuthRepository>()),
@@ -82,6 +101,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i782.SignoutUsecase>(
       () => _i782.SignoutUsecase(gh<_i710.AuthRepository>()),
+    );
+    gh.factory<_i767.SearchCubit>(
+      () => _i767.SearchCubit(gh<_i1047.SearchMoviesUseCase>()),
     );
     gh.factory<_i390.AuthCubit>(
       () => _i390.AuthCubit(
