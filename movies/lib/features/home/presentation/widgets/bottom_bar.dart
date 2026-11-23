@@ -26,8 +26,8 @@ class BottomBar extends StatelessWidget {
             onTap: onTap,
             items: [
               _item(Assets.icons.home),
-              _item(Assets.icons.search),
-              _item(Assets.icons.compass),
+              _item(Assets.icons.search ),
+              _item(Assets.icons.compass ),
               _item(Assets.icons.profile),
             ],
           ),
@@ -39,7 +39,7 @@ class BottomBar extends StatelessWidget {
   BottomNavigationBarItem _item(String path) {
     return BottomNavigationBarItem(
       label: '',
-      icon: _icon(path, AppColors.white),
+      icon: _icon(path, const Color.fromARGB(255, 66, 8, 8)),
       activeIcon: _icon(path, AppColors.yellow),
     );
   }

@@ -6,6 +6,7 @@ import 'package:movies/features/auth/presentation/screens/forget_password_screen
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/auth/presentation/screens/register_screen.dart';
 import 'package:movies/features/home/presentation/screens/home_screen.dart';
+import 'package:movies/features/search_feature/features/search/presentation/screens/search_screen.dart';
 import 'package:movies/screens/onboarding_screens.dart';
 
 abstract class AppRoutes {
@@ -26,5 +27,6 @@ abstract class AppRoutes {
       child: const ForgetPassword(),
     ),
     HomeScreen.routeName: (context) => const HomeScreen(),
+    SearchScreen.routeName: (context) => const SearchScreen(),
   };
 }

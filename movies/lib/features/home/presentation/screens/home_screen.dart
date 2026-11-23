@@ -5,6 +5,7 @@ import 'package:movies/features/home/presentation/widgets/bottom_bar.dart';
 import 'package:movies/features/home/presentation/widgets/home_background.dart';
 import 'package:movies/features/home/presentation/widgets/movies_carousel.dart';
 import 'package:movies/features/home/presentation/widgets/movies_section.dart';
+import 'package:movies/features/search_feature/features/search/presentation/screens/search_screen.dart';
 import 'package:movies/gen/assets.gen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,13 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.black,
-      appBar: AppBar(
+      appBar: _selectedTab == 0
+    ? AppBar(
         centerTitle: true,
         backgroundColor: AppColors.black,
         automaticallyImplyLeading: false,
         title: Assets.images.availableNow.image(),
-      ),
-      body: SingleChildScrollView(
+      )
+    : null,
+      body: IndexedStack(
+  index: _selectedTab,
+  children: [
+    SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -53,6 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    const SearchScreen(),
+    const SizedBox(), // browse, later
+    const SizedBox(), // profile, later
+  ],
+),
       bottomNavigationBar: BottomBar(
         currentIndex: _selectedTab,
         onTap: (tab) => setState(() => _selectedTab = tab),
