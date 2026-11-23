@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:movies/core/di/injection.dart';
+import 'package:movies/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:movies/features/auth/domain/usecases/forget_password_usecase.dart';
 import 'package:movies/features/auth/domain/usecases/google_signin_usecase.dart';
 import 'package:movies/features/auth/domain/usecases/login_usecase.dart';
@@ -23,7 +26,29 @@ Future<void> login(String email, String password) async {
       (user) => emit(AuthSuccess(user)),
     );
   }
+  // auth_cubit.dart
 
+
+Future<void> logout() async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    await getIt<AuthLocalDataSource>().clearToken(); // use your real method name
+    emit(AuthSignedOut());
+  } catch (e) {
+    emit(AuthError(e.toString()));
+  }
+}
+Future<void> deleteAccount() async {
+  try {
+    await FirebaseAuth.instance.currentUser?.delete();
+    await getIt<AuthLocalDataSource>().clearToken(); // your real method name
+    emit(AccountDeleted());
+  } on FirebaseAuthException catch (e) {
+    emit(AuthError(e.code == 'requires-recent-login'
+        ? 'Please log in again, then try deleting.'
+        : e.message ?? 'Could not delete account'));
+  }
+}
   Future<void> googleSignin() async {
     emit(AuthLoading());
     final result = await _googleSigninUsecase();

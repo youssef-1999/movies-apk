@@ -1,6 +1,6 @@
-import 'package:dartz/dartz.dart';
+
 import 'package:injectable/injectable.dart';
-import 'package:movies/core/errors/failures.dart';
+
 import 'package:movies/features/search_feature/features/search/domain/entities/movie.dart';
 import 'package:movies/features/search_feature/features/search/domain/repositories/search_repository.dart';
 

@@ -5,7 +5,7 @@ abstract class AuthState {}
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
-
+class AccountDeleted extends AuthState {}
 class AuthSuccess extends AuthState {
   final UserEntity user;
 

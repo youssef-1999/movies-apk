@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:movies/core/di/injection.dart';
 
 import 'package:movies/features/search_feature/features/search/presentation/cubit/search_cubit.dart';
