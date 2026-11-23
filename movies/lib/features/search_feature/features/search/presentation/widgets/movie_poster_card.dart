@@ -21,6 +21,10 @@ class MoviePosterCard extends StatelessWidget {
             Image.network(
               movie.posterUrl,
               fit: BoxFit.cover,
+              // The poster host (img.yts.pw) sends no CORS headers, so on web
+              // Flutter can't fetch the bytes itself. Fall back to a plain
+              // <img> element, which isn't subject to CORS. No effect on mobile.
+              webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
               errorBuilder: (_, _, _) => const ColoredBox(
                 color: Color(0xFF282A28),
                 child: Icon(Icons.broken_image, color: Colors.white38),
