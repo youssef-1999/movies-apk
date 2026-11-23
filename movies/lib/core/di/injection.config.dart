@@ -35,6 +35,16 @@ import 'package:movies/features/auth/domain/usecases/signout_usecase.dart'
     as _i782;
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart'
     as _i390;
+import 'package:movies/features/movie_details/data/datasources/movie_details_remote_data_source.dart'
+    as _i13;
+import 'package:movies/features/movie_details/data/repositories/movie_details_repository_impl.dart'
+    as _i736;
+import 'package:movies/features/movie_details/domain/repositories/movie_details_repository.dart'
+    as _i760;
+import 'package:movies/features/movie_details/domain/usecases/movie_details_usecases.dart'
+    as _i823;
+import 'package:movies/features/movie_details/presentation/cubit/movie_details_cubit.dart'
+    as _i334;
 import 'package:movies/features/search_feature/features/search/data/datasources/search_remote_data_source.dart'
     as _i792;
 import 'package:movies/features/search_feature/features/search/data/repositories/search_repository_impl.dart'
@@ -63,6 +73,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i974.FirebaseFirestore>(
       () => firebaseModule.firebaseFirestore,
     );
+    gh.lazySingleton<_i13.MovieDetailsRemoteDataSource>(
+      () => _i13.MovieDetailsRemoteDataSourceImpl(),
+    );
     gh.lazySingleton<_i803.AuthRemoteDataSource>(
       () => _i803.AuthRemoteDataSourceImpl(
         gh<_i59.FirebaseAuth>(),
@@ -74,6 +87,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1026.AuthLocalDataSource>(
       () => _i1026.AuthLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i760.MovieDetailsRepository>(
+      () => _i736.MovieDetailsRepositoryImpl(
+        gh<_i13.MovieDetailsRemoteDataSource>(),
+      ),
     );
     gh.lazySingleton<_i324.SearchRepository>(
       () => _i972.SearchRepositoryImpl(gh<_i792.SearchRemoteDataSource>()),
@@ -102,8 +120,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i782.SignoutUsecase>(
       () => _i782.SignoutUsecase(gh<_i710.AuthRepository>()),
     );
+    gh.lazySingleton<_i823.GetMovieDetailsUseCase>(
+      () => _i823.GetMovieDetailsUseCase(gh<_i760.MovieDetailsRepository>()),
+    );
+    gh.lazySingleton<_i823.GetMovieSuggestionsUseCase>(
+      () =>
+          _i823.GetMovieSuggestionsUseCase(gh<_i760.MovieDetailsRepository>()),
+    );
     gh.factory<_i767.SearchCubit>(
       () => _i767.SearchCubit(gh<_i1047.SearchMoviesUseCase>()),
+    );
+    gh.factory<_i334.MovieDetailsCubit>(
+      () => _i334.MovieDetailsCubit(
+        gh<_i823.GetMovieDetailsUseCase>(),
+        gh<_i823.GetMovieSuggestionsUseCase>(),
+      ),
     );
     gh.factory<_i390.AuthCubit>(
       () => _i390.AuthCubit(

@@ -3,6 +3,7 @@ import 'package:movies/core/theme/app_colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:movies/core/di/injection.dart';
+import 'package:movies/features/movie_details/presentation/screens/movie_details_screen.dart';
 
 import 'package:movies/features/search_feature/features/search/presentation/cubit/search_cubit.dart';
 import 'package:movies/features/search_feature/features/search/presentation/cubit/search_state.dart';
@@ -97,8 +98,14 @@ class _SearchBody extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 0.68,
             ),
-            itemBuilder: (_, index) =>
-                MoviePosterCard(movie: state.movies[index]),
+            itemBuilder: (context, index) => MoviePosterCard(
+              movie: state.movies[index],
+              onTap: () => Navigator.pushNamed(
+                context,
+                MovieDetailsScreen.routeName,
+                arguments: state.movies[index].id,
+              ),
+            ),
           );
         }
 

@@ -6,6 +6,7 @@ import 'package:movies/features/auth/presentation/screens/forget_password_screen
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/auth/presentation/screens/register_screen.dart';
 import 'package:movies/features/home/presentation/screens/home_screen.dart';
+import 'package:movies/features/movie_details/presentation/screens/movie_details_screen.dart';
 import 'package:movies/features/profile_feature/profile/presentation/screens/profile_screen.dart';
 import 'package:movies/features/search_feature/features/search/presentation/screens/search_screen.dart';
 import 'package:movies/screens/onboarding_screens.dart';
@@ -30,6 +31,9 @@ abstract class AppRoutes {
     HomeScreen.routeName: (context) => const HomeScreen(),
     SearchScreen.routeName: (context) => const SearchScreen(),
     ProfileScreen.routeName: (context) => const ProfileScreen(),
+    MovieDetailsScreen.routeName: (context) => MovieDetailsScreen(
+      movieId: ModalRoute.of(context)!.settings.arguments as int,
+    ),
     // UpdateProfileScreen is not a named route: it needs the ProfileCubit
     // from ProfileScreen, which pushes it with BlocProvider.value.
   };

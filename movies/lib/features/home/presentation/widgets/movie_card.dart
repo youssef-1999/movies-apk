@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movies/core/theme/app_colors.dart';
 import 'package:movies/features/home/domain/entities/movie_entity.dart';
+import 'package:movies/features/movie_details/presentation/screens/movie_details_screen.dart';
 
 class MovieCard extends StatelessWidget {
   final MovieEntity movie;
@@ -9,6 +10,17 @@ class MovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context,
+        MovieDetailsScreen.routeName,
+        arguments: movie.id,
+      ),
+      child: _buildCard(),
+    );
+  }
+
+  Widget _buildCard() {
     return Stack(
       fit: StackFit.expand,
       children: [
