@@ -11,16 +11,17 @@ abstract class ProfileLocalDataSource {
 
 @LazySingleton(as: ProfileLocalDataSource)
 class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
-  static const _kName = 'profile_name';
-  static const _kPhone = 'profile_phone';
-  static const _kAvatar = 'profile_avatar';
-  static const _kWish = 'profile_wish_count';
-  static const _kHistory = 'profile_history_count';
+  // One set of keys per logged-in user.
+  String get _uid => FirebaseAuth.instance.currentUser?.uid ?? 'guest';
+  String get _kName => 'profile_name_$_uid';
+  String get _kPhone => 'profile_phone_$_uid';
+  String get _kAvatar => 'profile_avatar_$_uid';
+  String get _kWish => 'profile_wish_count_$_uid';
+  String get _kHistory => 'profile_history_count_$_uid';
 
   @override
   Future<ProfileModel> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
-   
     final user = FirebaseAuth.instance.currentUser;
     return ProfileModel(
       name: prefs.getString(_kName) ?? user?.displayName ?? '',

@@ -36,8 +36,7 @@ class _ProfileView extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) async {
         if (state is AuthSignedOut) {
-          // Don't leak this user's profile to the next one who logs in.
-          await ProfileLocalDataSourceImpl().clear();
+        
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -121,17 +120,25 @@ class _ProfileView extends StatelessWidget {
                                   backgroundColor: AppColors.yellow,
                                   foregroundColor: Colors.black,
                                 ),
-                                onPressed: () {
-                                  final cubit = context.read<ProfileCubit>();
-                                  Navigator.push(
+                                onPressed: () async {
+                                  final profileCubit = context
+                                      .read<ProfileCubit>();
+                                  final authCubit = context.read<AuthCubit>();
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => BlocProvider.value(
-                                        value: cubit,
+                                      builder: (_) => MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider.value(
+                                            value: profileCubit,
+                                          ),
+                                          BlocProvider.value(value: authCubit),
+                                        ],
                                         child: const UpdateProfileScreen(),
                                       ),
                                     ),
                                   );
+                                  profileCubit.loadProfile();
                                 },
                                 child: const Text('Edit Profile'),
                               ),
@@ -155,7 +162,7 @@ class _ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
-                Expanded(child: ProfileTabs(watchlist: loaded.watchlist)),
+                  Expanded(child: ProfileTabs(watchlist: loaded.watchlist)),
                 ],
               );
             },
