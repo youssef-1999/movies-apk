@@ -5,6 +5,7 @@ import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/presentation/cubit/auth_state.dart';
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/profile_feature/profile/pfps.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../cubit/profile_cubit.dart';
 import '../cubit/profile_state.dart';
@@ -46,10 +47,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   Future<void> _save() async {
     await context.read<ProfileCubit>().updateProfile(
-          name: _name.text.trim(),
-          phone: _phone.text.trim(),
-          avatarIndex: _avatar,
-        );
+      name: _name.text.trim(),
+      phone: _phone.text.trim(),
+      avatarIndex: _avatar,
+    );
     if (mounted) Navigator.pop(context);
   }
 
@@ -61,17 +62,36 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         content: const Text('This will remove your saved profile data.'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Delete')),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
         ],
       ),
     );
     if (ok == true && mounted) {
       context.read<AuthCubit>().deleteAccount();
     }
+  }
+
+  void _resetPassword() {
+    final user = FirebaseAuth.instance.currentUser;
+    final email = user?.email;
+    final usesPassword =
+        user?.providerData.any((p) => p.providerId == 'password') ?? false;
+
+    if (email == null || email.isEmpty || !usesPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password reset is only available for email accounts.'),
+        ),
+      );
+      return;
+    }
+    context.read<AuthCubit>().forgetPassword(email);
   }
 
   @override
@@ -86,10 +106,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             LoginScreen.routeName,
             (route) => false,
           );
-        } else if (state is AuthError) {
+        } else if (state is PasswordResetSent) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+            const SnackBar(
+              content: Text('Password reset email sent. Check your inbox.'),
+            ),
           );
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
@@ -98,8 +124,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           backgroundColor: AppColors.black,
           centerTitle: true,
           iconTheme: const IconThemeData(color: AppColors.yellow),
-          title: const Text('Pick Avatar',
-              style: TextStyle(color: AppColors.yellow, fontSize: 16)),
+          title: const Text(
+            'Pick Avatar',
+            style: TextStyle(color: AppColors.yellow, fontSize: 16),
+          ),
         ),
         body: SafeArea(
           child: Padding(
@@ -116,24 +144,26 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 ),
                 const SizedBox(height: 24),
                 _Field(
-                    controller: _name,
-                    icon: Icons.person,
-                    keyboardType: TextInputType.name),
+                  controller: _name,
+                  icon: Icons.person,
+                  keyboardType: TextInputType.name,
+                ),
                 const SizedBox(height: 12),
                 _Field(
-                    controller: _phone,
-                    icon: Icons.phone,
-                    keyboardType: TextInputType.phone),
+                  controller: _phone,
+                  icon: Icons.phone,
+                  keyboardType: TextInputType.phone,
+                ),
                 const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
-                    onPressed: () {
-                      // TODO: reset password logic
-                    },
+                    onPressed: _resetPassword,
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    child: const Text('Reset Password',
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text(
+                      'Reset Password',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -141,8 +171,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.red,
-                        foregroundColor: Colors.white),
+                      backgroundColor: AppColors.red,
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: _delete,
                     child: const Text('Delete Account'),
                   ),
@@ -152,8 +183,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.yellow,
-                        foregroundColor: Colors.black),
+                      backgroundColor: AppColors.yellow,
+                      foregroundColor: Colors.black,
+                    ),
                     onPressed: _save,
                     child: const Text('Update Data'),
                   ),
@@ -171,23 +203,25 @@ class _Field extends StatelessWidget {
   final TextEditingController controller;
   final IconData icon;
   final TextInputType keyboardType;
-  const _Field(
-      {required this.controller,
-      required this.icon,
-      required this.keyboardType});
+  const _Field({
+    required this.controller,
+    required this.icon,
+    required this.keyboardType,
+  });
 
   @override
   Widget build(BuildContext context) => TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.black,
-          prefixIcon: Icon(icon, color: Colors.white),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none),
-        ),
-      );
+    controller: controller,
+    keyboardType: keyboardType,
+    style: const TextStyle(color: Colors.white),
+    decoration: InputDecoration(
+      filled: true,
+      fillColor: AppColors.black,
+      prefixIcon: Icon(icon, color: Colors.white),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+    ),
+  );
 }
