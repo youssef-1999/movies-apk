@@ -108,8 +108,6 @@ class _SearchBody extends StatelessWidget {
             ),
           );
         }
-
-        // Initial state and "no results" show the same empty picture.
         return const _EmptyView();
       },
     );
