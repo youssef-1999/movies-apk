@@ -36,7 +36,6 @@ class _ProfileView extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) async {
         if (state is AuthSignedOut) {
-        
           if (!context.mounted) return;
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -94,7 +93,10 @@ class _ProfileView extends StatelessWidget {
                               label: 'Wish List',
                             ),
                             const SizedBox(width: 32),
-                            _Stat(value: p.historyCount, label: 'History'),
+                            _Stat(
+                              value: loaded.history.length,
+                              label: 'History',
+                            ),
                             const SizedBox(width: 16),
                           ],
                         ),
@@ -162,7 +164,12 @@ class _ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Expanded(child: ProfileTabs(watchlist: loaded.watchlist)),
+                 Expanded(
+  child: ProfileTabs(
+    watchlist: loaded.watchlist,
+    history: loaded.history,
+  ),
+),
                 ],
               );
             },

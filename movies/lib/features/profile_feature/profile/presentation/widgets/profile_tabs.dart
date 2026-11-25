@@ -6,8 +6,12 @@ import 'package:movies/features/search_feature/features/search/presentation/widg
 
 class ProfileTabs extends StatelessWidget {
   final List<Movie> watchlist;
-  const ProfileTabs({super.key, required this.watchlist});
-
+  final List<Movie> history;
+  const ProfileTabs({
+    super.key,
+    required this.watchlist,
+    required this.history,
+  });
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -28,7 +32,7 @@ class ProfileTabs extends StatelessWidget {
             child: TabBarView(
               children: [
                 _MoviesGrid(movies: watchlist),
-                const _EmptyState(), // TODO(logic): history
+               _MoviesGrid(movies: history),
               ],
             ),
           ),

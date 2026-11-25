@@ -35,6 +35,14 @@ import 'package:movies/features/auth/domain/usecases/signout_usecase.dart'
     as _i782;
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart'
     as _i390;
+import 'package:movies/features/history/data/datasources/history_local_data_source.dart'
+    as _i451;
+import 'package:movies/features/history/data/repositories/history_repository_impl.dart'
+    as _i502;
+import 'package:movies/features/history/domain/repositories/history_repository.dart'
+    as _i719;
+import 'package:movies/features/history/domain/usecases/history_usecases.dart'
+    as _i806;
 import 'package:movies/features/movie_details/data/datasources/movie_details_remote_data_source.dart'
     as _i13;
 import 'package:movies/features/movie_details/data/repositories/movie_details_repository_impl.dart'
@@ -126,6 +134,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1026.AuthLocalDataSource>(),
       ),
     );
+    gh.lazySingleton<_i451.HistoryLocalDataSource>(
+      () => _i451.HistoryLocalDataSourceImpl(
+        gh<_i460.SharedPreferences>(),
+        gh<_i1026.AuthLocalDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i710.AuthRepository>(
       () => _i388.AuthRepositoryImpl(
         gh<_i803.AuthRemoteDataSource>(),
@@ -162,6 +176,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i782.SignoutUsecase>(
       () => _i782.SignoutUsecase(gh<_i710.AuthRepository>()),
     );
+    gh.lazySingleton<_i719.HistoryRepository>(
+      () => _i502.HistoryRepositoryImpl(gh<_i451.HistoryLocalDataSource>()),
+    );
     gh.lazySingleton<_i823.GetMovieDetailsUseCase>(
       () => _i823.GetMovieDetailsUseCase(gh<_i760.MovieDetailsRepository>()),
     );
@@ -171,6 +188,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i767.SearchCubit>(
       () => _i767.SearchCubit(gh<_i1047.SearchMoviesUseCase>()),
+    );
+    gh.lazySingleton<_i806.GetHistoryUseCase>(
+      () => _i806.GetHistoryUseCase(gh<_i719.HistoryRepository>()),
+    );
+    gh.lazySingleton<_i806.AddToHistoryUseCase>(
+      () => _i806.AddToHistoryUseCase(gh<_i719.HistoryRepository>()),
+    );
+    gh.lazySingleton<_i806.WatchHistoryUseCase>(
+      () => _i806.WatchHistoryUseCase(gh<_i719.HistoryRepository>()),
     );
     gh.lazySingleton<_i285.GetWatchlistUseCase>(
       () => _i285.GetWatchlistUseCase(gh<_i175.WatchlistRepository>()),
@@ -199,6 +225,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i823.GetMovieSuggestionsUseCase>(),
         gh<_i285.ToggleWatchlistUseCase>(),
         gh<_i285.IsBookmarkedUseCase>(),
+        gh<_i806.AddToHistoryUseCase>(),
       ),
     );
     gh.factory<_i435.ProfileCubit>(
@@ -207,7 +234,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i261.UpdateProfileUseCase>(),
         gh<_i261.DeleteProfileUseCase>(),
         gh<_i285.GetWatchlistUseCase>(),
+        gh<_i806.GetHistoryUseCase>(),
         gh<_i285.WatchWatchlistUseCase>(),
+        gh<_i806.WatchHistoryUseCase>(),
       ),
     );
     return this;

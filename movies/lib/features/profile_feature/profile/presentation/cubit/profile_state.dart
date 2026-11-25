@@ -10,7 +10,9 @@ class ProfileLoading extends ProfileState {}
 class ProfileLoaded extends ProfileState {
   final ProfileEntity profile;
   final List<Movie> watchlist;
-  ProfileLoaded(this.profile, [this.watchlist = const []]);
+  final List<Movie> history;
+  ProfileLoaded(this.profile,
+      [this.watchlist = const [], this.history = const []]);
 }
 
 class ProfileError extends ProfileState {
