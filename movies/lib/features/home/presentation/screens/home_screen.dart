@@ -5,6 +5,7 @@ import 'package:movies/features/home/presentation/widgets/bottom_bar.dart';
 import 'package:movies/features/home/presentation/widgets/home_background.dart';
 import 'package:movies/features/home/presentation/widgets/movies_carousel.dart';
 import 'package:movies/features/home/presentation/widgets/movies_section.dart';
+import 'package:movies/features/browse/presentation/screens/browse_screen.dart';
 import 'package:movies/features/profile_feature/profile/presentation/screens/profile_screen.dart';
 import 'package:movies/features/search_feature/features/search/presentation/screens/search_screen.dart';
 import 'package:movies/gen/assets.gen.dart';
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     const SearchScreen(),
-    const SizedBox(), // browse, later
+    const BrowseScreen(),
     const ProfileScreen(), // profile, later
   ],
 ),

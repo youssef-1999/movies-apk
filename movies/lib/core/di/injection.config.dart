@@ -35,6 +35,16 @@ import 'package:movies/features/auth/domain/usecases/signout_usecase.dart'
     as _i782;
 import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart'
     as _i390;
+import 'package:movies/features/browse/data/datasources/browse_remote_data_source.dart'
+    as _i445;
+import 'package:movies/features/browse/data/repositories/browse_repository_impl.dart'
+    as _i655;
+import 'package:movies/features/browse/domain/repositories/browse_repository.dart'
+    as _i863;
+import 'package:movies/features/browse/domain/usecases/browse_movies_usecase.dart'
+    as _i549;
+import 'package:movies/features/browse/presentation/cubit/browse_cubit.dart'
+    as _i307;
 import 'package:movies/features/history/data/datasources/history_local_data_source.dart'
     as _i451;
 import 'package:movies/features/history/data/repositories/history_repository_impl.dart'
@@ -99,6 +109,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i974.FirebaseFirestore>(
       () => firebaseModule.firebaseFirestore,
     );
+    gh.lazySingleton<_i445.BrowseRemoteDataSource>(
+      () => _i445.BrowseRemoteDataSourceImpl(),
+    );
     gh.lazySingleton<_i13.MovieDetailsRemoteDataSource>(
       () => _i13.MovieDetailsRemoteDataSourceImpl(),
     );
@@ -114,6 +127,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i900.ProfileLocalDataSource>(
       () => _i900.ProfileLocalDataSourceImpl(),
     );
+    gh.lazySingleton<_i863.BrowseRepository>(
+      () => _i655.BrowseRepositoryImpl(gh<_i445.BrowseRemoteDataSource>()),
+    );
     gh.lazySingleton<_i1026.AuthLocalDataSource>(
       () => _i1026.AuthLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
     );
@@ -124,6 +140,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i528.ProfileRepository>(
       () => _i297.ProfileRepositoryImpl(gh<_i900.ProfileLocalDataSource>()),
+    );
+    gh.lazySingleton<_i549.BrowseMoviesUseCase>(
+      () => _i549.BrowseMoviesUseCase(gh<_i863.BrowseRepository>()),
+    );
+    gh.factory<_i307.BrowseCubit>(
+      () => _i307.BrowseCubit(gh<_i549.BrowseMoviesUseCase>()),
     );
     gh.lazySingleton<_i324.SearchRepository>(
       () => _i972.SearchRepositoryImpl(gh<_i792.SearchRemoteDataSource>()),

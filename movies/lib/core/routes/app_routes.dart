@@ -5,6 +5,7 @@ import 'package:movies/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:movies/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:movies/features/auth/presentation/screens/login_screen.dart';
 import 'package:movies/features/auth/presentation/screens/register_screen.dart';
+import 'package:movies/features/browse/presentation/screens/browse_screen.dart';
 import 'package:movies/features/home/presentation/screens/home_screen.dart';
 import 'package:movies/features/movie_details/presentation/screens/movie_details_screen.dart';
 import 'package:movies/features/profile_feature/profile/presentation/screens/profile_screen.dart';
@@ -30,6 +31,9 @@ abstract class AppRoutes {
     ),
     HomeScreen.routeName: (context) => const HomeScreen(),
     SearchScreen.routeName: (context) => const SearchScreen(),
+    BrowseScreen.routeName: (context) => BrowseScreen(
+      initialGenre: ModalRoute.of(context)!.settings.arguments as String?,
+    ),
     ProfileScreen.routeName: (context) => const ProfileScreen(),
     MovieDetailsScreen.routeName: (context) => MovieDetailsScreen(
       movieId: ModalRoute.of(context)!.settings.arguments as int,
