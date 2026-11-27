@@ -11,6 +11,7 @@ import 'package:movies/features/home/presentation/screens/home_screen.dart';
 import 'package:movies/firebase_options.dart';
 import 'package:movies/screens/onboarding_screens.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
